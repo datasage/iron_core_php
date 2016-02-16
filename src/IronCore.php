@@ -253,7 +253,7 @@ class IronCore
         $this->loadFromHash($data);
     }
 
-    protected function apiCall($type, $url, $params = array(), $data = null)
+    protected function apiCall($type, $url, $params = array(), $data = null, $timeout = null)
     {
         $url = "{$this->url}$url";
         $this->debug("API $type", $url);
@@ -323,7 +323,11 @@ class IronCore
             curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
             curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($this->curl, CURLOPT_HTTPHEADER, $this->compiledCurlHeaders());
-            curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, $this->connection_timeout);
+            curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, $timeout ?: $this->connection_timeout);
+
+            if($timeout) {
+                curl_setopt($this->curl, CURLOPT_TIMEOUT, $timeout);
+            }
         }
         else
         {
